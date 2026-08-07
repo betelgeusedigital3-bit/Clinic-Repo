@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import {
   ArrowUpRight,
   Clock3,
-  HeartPulse,
   LoaderCircle,
   Mail,
   MapPin,
@@ -140,7 +140,15 @@ export default function LocationFooter() {
 
         <div className="footer-bottom">
           <a className="footer-brand" href="#top">
-            <HeartPulse size={21} aria-hidden="true" />
+            <span className="footer-logo-mark" aria-hidden="true">
+              <Image
+                className="footer-logo"
+                src="/brightnest-logo.png"
+                alt=""
+                width={612}
+                height={408}
+              />
+            </span>
             <span>BrightNest <small>Pediatric Clinic</small></span>
           </a>
           <p>© {new Date().getFullYear()} BrightNest. Care made gentler.</p>

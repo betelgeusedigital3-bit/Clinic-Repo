@@ -1,21 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useLayoutEffect, useRef } from "react";
 import { ArrowRight, CalendarCheck, MessageCircleMore } from "lucide-react";
 import { gsap } from "gsap";
-
-const Hero3D = dynamic(() => import("./Hero3D"), {
-  ssr: false,
-  loading: () => (
-    <div className="mobile-placeholder" aria-label="Loading nursery mobile">
-      <span className="mobile-placeholder-orbit" />
-      <span className="mobile-placeholder-dot dot-one" />
-      <span className="mobile-placeholder-dot dot-two" />
-      <span className="mobile-placeholder-dot dot-three" />
-    </div>
-  ),
-});
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -78,12 +66,15 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="hero-visual" aria-label="A gently moving nursery mobile">
-          <div className="visual-label">
-            <span>Care that grows</span>
-            <strong>with your child</strong>
-          </div>
-          <Hero3D />
+        <div className="hero-visual">
+          <Image
+            className="hero-image"
+            src="/mother-and-baby-hero.png"
+            alt="A smiling mother holding her happy baby"
+            fill
+            priority
+            sizes="(min-width: 1040px) 540px, (min-width: 760px) 45vw, calc(100vw - 2rem)"
+          />
         </div>
       </div>
     </section>

@@ -37,6 +37,11 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | BrightNest Pediatric Clinic",
     },
     description,
+    icons: {
+      icon: [{ url: "/brightnest-logo.png", type: "image/png" }],
+      shortcut: "/brightnest-logo.png",
+      apple: "/brightnest-logo.png",
+    },
     keywords: [
       "pediatric clinic Lahore",
       "child specialist",

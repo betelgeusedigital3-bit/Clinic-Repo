@@ -66,3 +66,18 @@ test("appointment contact fields stay editable before a time is selected", async
     /<fieldset[^>]+disabled=\{!selectedTime\}/,
   );
 });
+
+test("successful appointments email the owner and show a confirmation modal", async () => {
+  const [bookingEngine, bookingRoute] = await Promise.all([
+    readFile(new URL("../components/BookingEngine.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/book/route.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(bookingRoute, /to: clinicInbox/);
+  assert.match(bookingRoute, /replyTo: data\.email/);
+  assert.match(bookingRoute, /Status:<\/strong> Pending approval/);
+  assert.doesNotMatch(bookingRoute, /Promise\.all/);
+  assert.match(bookingEngine, /role="dialog"/);
+  assert.match(bookingEngine, /Appointment request received/);
+  assert.match(bookingEngine, /whether it is approved/);
+});

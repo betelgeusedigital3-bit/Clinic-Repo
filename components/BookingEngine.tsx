@@ -8,8 +8,9 @@ import {
   LoaderCircle,
   Send,
   Sparkles,
+  X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   bookingSchema,
@@ -38,6 +39,7 @@ function dateInputValue(date: Date) {
 export default function BookingEngine() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const modalCloseButtonRef = useRef<HTMLButtonElement>(null);
 
   const {
     register,
@@ -64,6 +66,18 @@ export default function BookingEngine() {
   const selectedService = watch("service");
   const selectedDate = watch("date");
   const selectedTime = watch("time");
+
+  useEffect(() => {
+    if (status !== "success") return;
+
+    modalCloseButtonRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setStatus("idle");
+    };
+    document.addEventListener("keydown", closeOnEscape);
+
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [status]);
 
   const { minDate, maxDate } = useMemo(() => {
     const today = new Date();
@@ -99,7 +113,8 @@ export default function BookingEngine() {
 
       setStatus("success");
       setStatusMessage(
-        result.message ?? "Your request is on its way. We’ll confirm it shortly.",
+        result.message ??
+          "Your appointment has been requested. We will let you know whether it is approved.",
       );
       reset();
     } catch (error) {
@@ -274,15 +289,53 @@ export default function BookingEngine() {
               )}
             </button>
 
-            {status !== "idle" && (
-              <div className={`form-status ${status}`} role="status">
-                {status === "success" && <Check size={20} aria-hidden="true" />}
+            {status === "error" && (
+              <div className="form-status error" role="alert">
                 <p>{statusMessage}</p>
               </div>
             )}
           </fieldset>
         </form>
       </div>
+
+      {status === "success" && (
+        <div className="booking-modal-backdrop">
+          <div
+            className="booking-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="booking-confirmation-title"
+            aria-describedby="booking-confirmation-message"
+          >
+            <button
+              className="booking-modal-close"
+              type="button"
+              aria-label="Close confirmation"
+              ref={modalCloseButtonRef}
+              onClick={() => setStatus("idle")}
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
+            <span className="booking-modal-icon" aria-hidden="true">
+              <Check size={34} />
+            </span>
+            <p className="eyebrow">Request received</p>
+            <h3 id="booking-confirmation-title">Appointment request received</h3>
+            <p id="booking-confirmation-message">{statusMessage}</p>
+            <p className="booking-modal-note">
+              The clinic owner has received your details and will contact you by
+              phone or email with an update.
+            </p>
+            <button
+              className="button button-primary booking-modal-action"
+              type="button"
+              onClick={() => setStatus("idle")}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -41,43 +41,32 @@ export async function POST(request: Request) {
       ]),
     );
 
-    const [clinicResult, parentResult] = await Promise.all([
-      resend.emails.send({
-        from: senderAddress,
-        to: clinicInbox,
-        replyTo: data.email,
-        subject: `New booking: ${service} — ${data.date} at ${data.time}`,
-        html: `
-          <h1>New BrightNest appointment request</h1>
-          <p><strong>Service:</strong> ${escapeHtml(service)}</p>
-          <p><strong>Date:</strong> ${safe.date}</p>
-          <p><strong>Time:</strong> ${safe.time}</p>
-          <p><strong>Parent:</strong> ${safe.parentName}</p>
-          <p><strong>Email:</strong> ${safe.email}</p>
-          <p><strong>Phone:</strong> ${safe.phone}</p>
-          <p><strong>Child’s age:</strong> ${safe.childAge}</p>
-          <p><strong>Notes:</strong> ${safe.notes || "None provided"}</p>
-        `,
-      }),
-      resend.emails.send({
-        from: senderAddress,
-        to: data.email,
-        subject: "We received your BrightNest appointment request",
-        html: `
-          <h1>Thank you, ${safe.parentName}</h1>
-          <p>We’ve received your request for a <strong>${escapeHtml(service)}</strong> on <strong>${safe.date}</strong> at <strong>${safe.time}</strong>.</p>
-          <p>Our care coordinator will confirm the appointment by phone or email shortly.</p>
-          <p>If your child needs urgent medical care, please contact your local emergency service.</p>
-        `,
-      }),
-    ]);
+    const clinicResult = await resend.emails.send({
+      from: senderAddress,
+      to: clinicInbox,
+      replyTo: data.email,
+      subject: `New booking: ${service} — ${data.date} at ${data.time}`,
+      html: `
+        <h1>New BrightNest appointment request</h1>
+        <p><strong>Status:</strong> Pending approval</p>
+        <p><strong>Service:</strong> ${escapeHtml(service)}</p>
+        <p><strong>Date:</strong> ${safe.date}</p>
+        <p><strong>Time:</strong> ${safe.time}</p>
+        <p><strong>Parent:</strong> ${safe.parentName}</p>
+        <p><strong>Email:</strong> ${safe.email}</p>
+        <p><strong>Phone:</strong> ${safe.phone}</p>
+        <p><strong>Child’s age:</strong> ${safe.childAge}</p>
+        <p><strong>Notes:</strong> ${safe.notes || "None provided"}</p>
+      `,
+    });
 
-    if (clinicResult.error || parentResult.error) {
-      throw new Error("Resend could not deliver one or more booking emails.");
+    if (clinicResult.error) {
+      throw new Error("Resend could not deliver the booking email to the clinic.");
     }
 
     return NextResponse.json({
-      message: "Your appointment request is on its way. We’ll confirm it shortly.",
+      message:
+        "Your appointment has been requested. We will let you know whether it is approved.",
     });
   } catch (error) {
     console.error("Booking request failed", error);

@@ -1009,6 +1009,101 @@ h3 {
   color: #a23f2d;
 }
 
+.booking-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  background: rgba(49, 36, 30, 0.5);
+  padding: 1rem;
+  backdrop-filter: blur(7px);
+  animation: booking-modal-fade 180ms ease-out;
+}
+
+.booking-modal {
+  position: relative;
+  width: min(100%, 520px);
+  border: 1px solid rgba(59, 46, 40, 0.08);
+  border-radius: 28px;
+  background: var(--white);
+  box-shadow: 0 30px 80px rgba(49, 36, 30, 0.28);
+  padding: clamp(2rem, 6vw, 3rem);
+  text-align: center;
+  animation: booking-modal-rise 220ms ease-out;
+}
+
+.booking-modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--charcoal);
+}
+
+.booking-modal-icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: rgba(242, 169, 60, 0.2);
+  color: #9a5c05;
+}
+
+.booking-modal .eyebrow {
+  margin-bottom: 0.5rem;
+}
+
+.booking-modal h3 {
+  margin: 0;
+  font-family: var(--font-fredoka), system-ui, sans-serif;
+  font-size: clamp(1.55rem, 5vw, 2.15rem);
+  line-height: 1.15;
+}
+
+.booking-modal > p:not(.eyebrow) {
+  max-width: 410px;
+  margin: 0.85rem auto 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.booking-modal .booking-modal-note {
+  font-size: 0.78rem;
+}
+
+.booking-modal-action {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@keyframes booking-modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes booking-modal-rise {
+  from { transform: translateY(12px) scale(0.98); }
+  to { transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-modal-backdrop,
+  .booking-modal {
+    animation: none;
+  }
+}
+
 .testimonials-section {
   overflow: hidden;
 }

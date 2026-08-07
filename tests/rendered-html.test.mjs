@@ -53,3 +53,16 @@ test("finished site replaces all starter preview artifacts", async () => {
   assert.match(bookingRoute, /RESEND|resend/i);
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
 });
+
+test("appointment contact fields stay editable before a time is selected", async () => {
+  const bookingEngine = await readFile(
+    new URL("../components/BookingEngine.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(bookingEngine, /<fieldset className="form-step details-step">/);
+  assert.doesNotMatch(
+    bookingEngine,
+    /<fieldset[^>]+disabled=\{!selectedTime\}/,
+  );
+});

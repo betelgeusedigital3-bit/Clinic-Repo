@@ -216,12 +216,12 @@ export default function BookingEngine() {
             {errors.time && <p className="field-error">{errors.time.message}</p>}
           </div>
 
-          <fieldset className={`form-step details-step ${!selectedTime ? "is-locked" : ""}`} disabled={!selectedTime}>
+          <fieldset className="form-step details-step">
             <legend className="step-heading">
               <span>4</span>
               <span>
                 <strong>Your details</strong>
-                <small>So we can confirm the appointment.</small>
+                <small>You can fill this in while choosing your appointment.</small>
               </span>
             </legend>
             <div className="details-grid">

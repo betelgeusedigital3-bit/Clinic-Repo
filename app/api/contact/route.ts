@@ -28,27 +28,27 @@ export async function POST(request: Request) {
     }
 
     const { name, email, message } = parsed.data;
-    const [clinicResult, parentResult] = await Promise.all([
-      resend.emails.send({
-        from: senderAddress,
-        to: clinicInbox,
-        replyTo: email,
-        subject: `Website inquiry from ${name}`,
-        html: `<h1>New website inquiry</h1><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p>${escapeHtml(message)}</p>`,
-      }),
-      resend.emails.send({
-        from: senderAddress,
-        to: email,
-        subject: "We received your BrightNest question",
-        html: `<h1>Thank you, ${escapeHtml(name)}</h1><p>We’ve received your message and a member of our team will reply soon.</p>`,
-      }),
-    ]);
+    const clinicResult = await resend.emails.send({
+      from: senderAddress,
+      to: clinicInbox,
+      replyTo: email,
+      subject: `Website inquiry from ${name}`,
+      html: `
+        <h1>New website inquiry</h1>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Question:</strong></p>
+        <p>${escapeHtml(message)}</p>
+      `,
+    });
 
-    if (clinicResult.error || parentResult.error) {
-      throw new Error("Resend could not deliver one or more inquiry emails.");
+    if (clinicResult.error) {
+      throw new Error("Resend could not deliver the inquiry email to the clinic.");
     }
 
-    return NextResponse.json({ message: "Thanks — your question is on its way." });
+    return NextResponse.json({
+      message: "Thanks — your question has been sent. We’ll reply soon.",
+    });
   } catch (error) {
     console.error("Contact request failed", error);
     return NextResponse.json(

@@ -81,3 +81,15 @@ test("successful appointments email the owner and show a confirmation modal", as
   assert.match(bookingEngine, /Appointment request received/);
   assert.match(bookingEngine, /whether it is approved/);
 });
+
+test("contact questions succeed when the owner email is delivered", async () => {
+  const contactRoute = await readFile(
+    new URL("../app/api/contact/route.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(contactRoute, /to: clinicInbox/);
+  assert.match(contactRoute, /replyTo: email/);
+  assert.doesNotMatch(contactRoute, /Promise\.all/);
+  assert.doesNotMatch(contactRoute, /to: email/);
+});
